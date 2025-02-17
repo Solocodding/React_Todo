@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect,useRef,useContext } from "react";
 import progressIcon from "../../assets/progress.svg";
 import commentsIcon from "../../assets/comments.svg";
 import shareIcon from "../../assets/share.svg";
@@ -7,26 +7,104 @@ import UpdateTask from "../../antdComponents/UpdateTask";
 import Sharewith from "../../antdComponents/Sharewith";
 import { message } from 'antd';
 import { useDrag } from "react-dnd";
-
+import {SocketContext} from "../../App";
 function Task({ item, theme, setTasks }) {
 
-    const[{isDragging}, drag]=useDrag({
-        type:'task',
-        item:{id:item._id, taskStatus:item.taskStatus},
-        collect:(monitor)=>({
-            isDragging:monitor.isDragging(),
+    const handleRefresh = async () => {
+        try {
+          const response = await fetch("http://localhost:8181/task", {
+            method: "GET",
+            credentials: "include", // Include cookies
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          if (!response.ok) {
+            throw new Error("Failed to fetch tasks");
+          }
+          const data = await response.json();
+          setTasks(prevTasks => {
+            if (JSON.stringify(prevTasks) !== JSON.stringify(data.tasks)) {
+              return data.tasks;
+            }
+            return prevTasks;
+          });
+        } catch (error) {
+          console.error("Error fetching tasks:", error.message);
+        }
+    };
+
+    const socket = useContext(SocketContext);
+
+    socket.on('refreshTask', (taskId) => {
+        // console.log("refreshTask");
+        setTasks((prevTasks) => {
+            return prevTasks.map(task => task._id === taskId ? { ...task, refresh: true } : task);
         })
     })
-        
+
+    // function handleRefresh(itemId){
+    //     setTasks((prevTasks) => {
+    //         return prevTasks.map(task => task._id === itemId ? { ...task, refresh: false } : task);
+    //     })
+    // }
+
+    const scrollInterval =useRef(null);
+
+    const [{ isDragging }, drag] = useDrag({
+        type: 'task',
+        item: { id: item._id, taskStatus: item.taskStatus },
+        collect: (monitor) => ({
+            isDragging: monitor.isDragging(),
+        }),
+    })
+    
+    useEffect(() => {
+        if(isDragging){
+            document.addEventListener("dragover", handleAutoScroll);
+        }else{
+            document.removeEventListener("dragover", handleAutoScroll);
+            clearInterval(scrollInterval.current);
+        }
+        return (() => {
+            document.removeEventListener("dragover", handleAutoScroll);
+            clearInterval(scrollInterval.current);
+        })
+
+    },[isDragging]);
+
+
+    const handleAutoScroll = (event) => {
+        const threshold = 50; // Distance from the edge to trigger scrolling
+        const scrollSpeed = 10; // Speed of scrolling
+
+        if(scrollInterval.current){
+            clearInterval(scrollInterval.current);
+        }
+
+        if(event.clientY < threshold){
+            scrollInterval.current = setInterval(() => {
+                window.scrollBy(0, -scrollSpeed);
+            },50);
+        }else if(event.clientY > window.innerHeight - threshold){
+            scrollInterval.current = setInterval(() => {
+                window.scrollBy(0, scrollSpeed);
+            },50);
+        }else{
+            clearInterval(scrollInterval.current);
+        }   
+    };
 
     const [showOptions, setShowOptions] = useState(false);
-    // const [updatedTask, setUpdatedTask] = useState({ ...item });
+    // const optionRef = useRef(null);
+
+    const user=JSON.parse(localStorage.getItem('user'));
 
     const handleDelete = async () => {
         if (confirm("Are you sure you want to delete this task?")) {
 
             try {
-                const response = await fetch(`http://localhost:8181/task/delete/${item._id}`, {
+                const response = await fetch(`http://localhost:8181/task/delete/${item._id}/${user._id}`, {
                     method: "DELETE",
                     credentials: "include",
                 });
@@ -49,13 +127,36 @@ function Task({ item, theme, setTasks }) {
         }
         setShowOptions(false);
     };
+    // useEffect(()=>{
+    //     const handleClickOutside = (event) => {
+    //         if (optionRef.current && !optionRef.current.contains(event.target)) {
+    //             setShowOptions(false);
+    //         }
+    //     };
+    //     document.addEventListener("mousedown", handleClickOutside);
+    //     return () => {
+    //         document.removeEventListener("mousedown", handleClickOutside);
+    //     }
+
+    // },[]);
 
     return (
-        <div 
-            ref={drag} 
+        <div
+            ref={drag}
             style={{ opacity: isDragging ? 0.5 : 1 }}
+            className={`relative flex flex-col w-full p-4 ${theme === "dark" ? "bg-[#292B31]" : "bg-[#f9fafd]"} rounded-lg hover:cursor-move w-full max-w-[300px]`}
+        >
+            
+            {
+                item.refresh && 
+                <button 
+                    className="absolute right-2 top-0 cursor-pointer "
+                    onClick={() => handleRefresh()}    
+                >
+                    🔄
+                </button>
+            }
 
-            className={`flex flex-col w-full p-4 ${theme === "dark" ? "bg-[#292B31]" : "bg-[#f9fafd]"} rounded-lg hover:cursor-move w-full max-w-[300px]`}>
             {/* Task Header */}
             <div className="flex items-center justify-between">
                 <div>
@@ -72,7 +173,9 @@ function Task({ item, theme, setTasks }) {
                         />
                     </button>
                     {showOptions && (
-                        <div className={`absolute right-0  ${theme === "dark" ? "bg-[#292B31]" : "bg-white"} shadow-lg rounded-lg flex flex-col`}>
+                        <div 
+                            // ref={optionRef} 
+                            className={`absolute right-0  ${theme === "dark" ? "bg-[#292B31]" : "bg-white"} shadow-lg rounded-lg flex flex-col`}>
                             <UpdateTask theme={theme} item={item} setTasks={setTasks} setShowOptions={setShowOptions} />
                             <Sharewith theme={theme} item={item} setShowOptions={setShowOptions} />
                             <button className="text-red-500 hover:underline mt-1" onClick={handleDelete}>Delete</button>

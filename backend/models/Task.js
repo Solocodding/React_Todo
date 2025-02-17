@@ -22,6 +22,10 @@ const TaskSchema = new mongoose.Schema({
         default: 0
         //default: taskStatus === "Done" ? 10 : taskStatus === "In Progress" ? 7 : 3
     },
+    refresh: {
+        type: Boolean,
+        default: false
+    },
     taskComments: {
         type: Number,
         default: 0
@@ -42,11 +46,6 @@ const TaskSchema = new mongoose.Schema({
         type: Array,
         default: []
     },
-    // userId: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "User",
-    //     required: true
-    // }
 });
 
 module.exports = mongoose.model("Task", TaskSchema);

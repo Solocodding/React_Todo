@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect,useContext } from 'react';
 import Sidebar from './Sidebar/Sidebar';
 import Header from './Headers/Header';
 import Menu from './Menu/Menu';
@@ -9,6 +9,7 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { message } from 'antd';
 import TaskBoard from './Task/TaskBoard';
+import { SocketContext } from '../App';
 
 
 function Home() {
@@ -18,6 +19,26 @@ function Home() {
   const [loggedin, setLoggedIn] = useState(false);
   const [taskBoards, setTaskBoards] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [notifications, setNotifications] = useState([]);
+
+  const socket = useContext(SocketContext);
+
+  useEffect(() => {
+    if (!socket) return; 
+
+    socket.on("connect", () => {
+      const user=JSON.parse(localStorage.getItem('user'));
+      const userEmail = user?.email; 
+        if (userEmail) {
+            socket.emit("updateSocketId", { email: userEmail, socketId: socket.id });
+        }
+        // console.log("Socket connected:", socket.id, userEmail);
+    });
+
+    return () => {
+        socket.off("connect");
+    };
+  }, [socket,loggedin]);
 
   const data = [
     {
@@ -38,9 +59,6 @@ function Home() {
       subtasks: [
         { name: `All Tasks (${tasks.length})` },
         ...taskBoards.map((board) => ({ name: `${board} (${tasks.filter(item => item.taskStatus === board).length})` })),
-        // { name: "To Do (4)" },
-        // { name: "In Progress (4)" },
-        // { name: "Done (3)" },
       ],
     },
     {
@@ -84,11 +102,13 @@ function Home() {
         }
         const data = await response.json();
         setTasks(prevTasks => {
-          if (JSON.stringify(prevTasks) !== JSON.stringify(data)) {
-            return data;
+          if (JSON.stringify(prevTasks) !== JSON.stringify(data.tasks)) {
+            return data.tasks;
           }
           return prevTasks;
         });
+        setNotifications(data.notifications);
+        // console.log(data.notifications);
       } catch (error) {
         console.error("Error fetching tasks:", error.message);
       }
@@ -164,8 +184,6 @@ function Home() {
     }
   };
   
-
-
   if (loading) {
     return <div className="h-screen flex items-center justify-center">Loading...</div>
   }
@@ -188,7 +206,7 @@ function Home() {
           {/* Board Area */}
           <div className="flex  flex-col items-center  w-full h-full p-4">
             {/* Header */}
-            <Header theme={theme} tasks={tasks} />
+            <Header theme={theme} tasks={tasks} setTasks={setTasks} taskBoards={taskBoards} setTaskBoards={setTaskBoards} notifications={notifications} setNotifications={setNotifications} />
 
             {/* Menu */}
             <Menu theme={theme} setTaskBoards={setTaskBoards} />
@@ -210,7 +228,7 @@ function Home() {
           </div>
         </div>
       ) : (
-        <Login setLoggedIn={setLoggedIn} />
+        <Login setLoggedIn={setLoggedIn}/>
       )}
     </ DndProvider>
   );

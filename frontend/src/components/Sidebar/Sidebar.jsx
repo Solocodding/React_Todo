@@ -44,6 +44,7 @@ function Sidebar({setProjectvisible, tasks, taskBoards}) {
                         onClick={()=>{
                             if(confirm("Are you sure you want to logout?")){
                                 Cookie.remove('authToken');
+                                localStorage.removeItem('user');
                                 window.location.href = '/';
                                 // navigate('/');
                             }

@@ -19,6 +19,7 @@ function AddNewBoard({theme, setTaskBoards}) {
     };
 
     const handleFormSubmit = async (values) => {
+        console.log(values);
         try {
             const response = await fetch("http://localhost:8181/view/add", {
                 method: "POST",

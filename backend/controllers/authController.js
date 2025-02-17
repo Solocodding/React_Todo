@@ -55,13 +55,14 @@
             if(!isMatch){
                 return res.status(400).json({message:"Invalid credentials"});
             }
-
-            const token = jwt.sign({id:user._id},process.env.JWT_SECRET);
-            res.cookie('authToken',token,{
-                // httpOnly:true,
+            const options={
                 maxAge:60*60*1000,
-            });  
-            res.status(200).json({user : {username:user.username,email:user.email},message:"Login successful"});
+            }
+            const token = jwt.sign({id:user._id},process.env.JWT_SECRET);
+            res.cookie('authToken',token,options).status(200).json({
+                success:true,
+                user : {id:user._id,username:user.username,email:user.email,profilePic:user.profilePic},
+                message:"Login successful"}); 
         }catch(error){
             console.log(error);
             res.status(500).json({message:"Something went wrong"});

@@ -18,6 +18,8 @@ function Login({ setLoggedIn }) {
 
       const result = await response.json();
       if (response.ok) {
+        const user=result.user;
+        localStorage.setItem('user', JSON.stringify(user));
         setLoggedIn(true);
         message.success('Login successful!');
       } else {

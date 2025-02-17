@@ -9,6 +9,6 @@ router.post('/add', verifyToken, addTask);
 router.put('/dnd', verifyToken, dndTask);
 router.put('/update/:id', verifyToken, updateTask);
 router.put('/sharewith/:id', verifyToken, sharewith);
-router.delete('/delete/:id', verifyToken, deleteTask);
+router.delete('/delete/:taskId/:userId', verifyToken, deleteTask);
 
 module.exports = router;

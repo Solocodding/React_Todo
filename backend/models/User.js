@@ -10,6 +10,11 @@ const UserSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    socketId: {
+        type:String,
+        default:"",
+        unique: true
+    },
     password: {
         type: String,
         required: true
@@ -19,6 +24,10 @@ const UserSchema = new mongoose.Schema({
         default: ""
     },
     taskBoards: {
+        type: Array,
+        default: [],
+    },
+    notifications:{
         type: Array,
         default: [],
     },
