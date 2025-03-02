@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { Modal, Button, message } from 'antd';
-import logo from '../../assets/Sidebar/logo.svg'
 
 export default function Profile({ theme }) {
     const storedUser = JSON.parse(localStorage.getItem('user'));
