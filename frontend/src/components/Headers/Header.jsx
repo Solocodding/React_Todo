@@ -1,5 +1,5 @@
 import { useState, useEffect,useContext } from 'react';
-import Search from '../../assets/Header/search.svg';
+import Search from '../../assets/Header/Search.svg';
 import Notification from '../../assets/Header/Notifications.svg';
 import calendar from '../../assets/Sidebar/calendar.svg';
 import { SocketContext } from '../../App';
