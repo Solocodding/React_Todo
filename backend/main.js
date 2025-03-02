@@ -23,12 +23,17 @@ const io=new Server(server,{
 
 
 // Allow CORS from specific origin
+const allowedOrigins = [
+  "http://localhost:5173",  // Local development
+  "https://task-management-phi-ten.vercel.app",  // Vercel frontend
+];
+
 app.use(
   cors({
-    origin: 'http://localhost:5173', // Frontend origin
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
-    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
-    credentials: true, // Allow credentials (cookies, authentication headers, etc.)
+    origin: allowedOrigins,  // Allow multiple origins
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,  // Allow cookies to be sent
   })
 );
 //Routes
