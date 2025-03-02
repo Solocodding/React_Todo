@@ -12,22 +12,20 @@ const cookieParser = require('cookie-parser');
 
 const {Server}=require('socket.io');
 
-const io=new Server(server,{
-  cors: {
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST",'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
-  }
-});
-
-
-// Allow CORS from specific origin
 const allowedOrigins = [
   "http://localhost:5173",  // Local development
   "https://task-management-phi-ten.vercel.app",  // Vercel frontend
 ];
 
+const io = new Server(server, {
+  cors: {
+    origin: allowedOrigins,  // Allow multiple origins
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
+  }
+});
+// Allow CORS from specific origin
 app.use(
   cors({
     origin: allowedOrigins,  // Allow multiple origins
