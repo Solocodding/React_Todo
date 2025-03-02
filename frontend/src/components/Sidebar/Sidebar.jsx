@@ -12,7 +12,7 @@ import nextpage from '../../assets/Sidebar/nextpage.svg'
 import links from '../../assets/Sidebar/links.svg'
 import logout from '../../assets/Sidebar/logout.svg'
 import Cookie from 'js-cookie'
-import Report from '../../antdComponents/report'
+import Report from '../../antdComponents/Report'
 function Sidebar({setProjectvisible, tasks, taskBoards}) {
     const [reportvisible, setReportvisible] = useState(false);
     const navigate = useNavigate();

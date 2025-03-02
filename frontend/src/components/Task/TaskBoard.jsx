@@ -1,5 +1,5 @@
 import Task from './Task';
-import TodoDialog from '../../antdComponents/todoDialog';
+import TodoDialog from '../../antdComponents/TodoDialog';
 import DropZone from './DropZone';
 import { message } from 'antd';
 import { useDrag, useDrop } from 'react-dnd';
