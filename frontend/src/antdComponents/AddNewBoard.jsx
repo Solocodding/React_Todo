@@ -3,6 +3,7 @@ import {Button, Modal, Form, Input, message} from "antd";
 function AddNewBoard({theme, setTaskBoards}) {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const BASE_URL = import.meta.env.VITE_REACT_APP_BASE_URL;
 
     const [form] = Form.useForm();
     const showModal = () => {
@@ -21,7 +22,7 @@ function AddNewBoard({theme, setTaskBoards}) {
     const handleFormSubmit = async (values) => {
         console.log(values);
         try {
-            const response = await fetch("http://localhost:8181/view/add", {
+            const response = await fetch(`${BASE_URL}/view/add`, {
                 method: "POST",
                 credentials: "include",
                 headers: {

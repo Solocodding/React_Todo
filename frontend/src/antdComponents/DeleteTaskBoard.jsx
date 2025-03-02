@@ -4,6 +4,7 @@ export default function DeleteTaskBoard({theme, setTaskBoards, setShowOptions}){
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
+    const BASE_URL = import.meta.env.VITE_REACT_APP_BASE_URL;
     const showModal = () => {
         setIsModalOpen(true);
     };
@@ -22,7 +23,7 @@ export default function DeleteTaskBoard({theme, setTaskBoards, setShowOptions}){
         try {
             const TaskBoardToDelete = { ...values};
             // console.log(TaskBoardToDelete.viewName);
-            const response = await fetch(`http://localhost:8181/view/delete/${TaskBoardToDelete.viewName}`,{
+            const response = await fetch(`${BASE_URL}/view/delete/${TaskBoardToDelete.viewName}`,{
                 method: "DELETE",
                 credentials: "include",
             });

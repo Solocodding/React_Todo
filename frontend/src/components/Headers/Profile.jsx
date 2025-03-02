@@ -7,6 +7,8 @@ export default function Profile({ theme }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [user, setUser] = useState(storedUser);
 
+    const BASE_URL = import.meta.env.VITE_REACT_APP_BASE_URL;
+
     const showModal = () => {
         setIsModalOpen(true);
     };
@@ -33,7 +35,7 @@ export default function Profile({ theme }) {
         formData.append('userId', userId);
         formData.append('image', file);
 
-        fetch('http://localhost:8181/profile/uploadPhoto', {
+        fetch(`${BASE_URL}/profile/uploadPhoto`, {
             method: 'POST',
             body: formData,
         })
@@ -67,7 +69,7 @@ export default function Profile({ theme }) {
             >
                 <img
                     className="w-full h-full rounded-full"
-                    src={`http://localhost:8181${user.profilePic}`}
+                    src={`${BASE_URL}${user.profilePic}`}
                     alt="User Profile"
                     style={{ width: "100%", height: "100%", borderRadius: "50%" }}
                 />
@@ -84,7 +86,7 @@ export default function Profile({ theme }) {
                     <div className="flex flex-col left-container gap-2">
                         <img
                             className="w-[100px] h-[100px] rounded-full"
-                            src={`http://localhost:8181${user.profilePic}`}
+                            src={`${BASE_URL}${user.profilePic}`}
                             alt="User Profile"
                         />
                         <h3>{user.username || 'Guest'}</h3>

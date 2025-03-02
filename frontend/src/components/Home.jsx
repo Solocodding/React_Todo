@@ -20,6 +20,7 @@ function Home() {
   const [taskBoards, setTaskBoards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState([]);
+  const BASE_URL = import.meta.env.VITE_REACT_APP_BASE_URL;
 
   const socket = useContext(SocketContext);
 
@@ -39,7 +40,7 @@ function Home() {
         socket.off("connect");
     };
   }, [socket,loggedin]);
-
+  
   const data = [
     {
       name: "Team",
@@ -89,7 +90,7 @@ function Home() {
         return;
       }
       try {
-        const response = await fetch("http://localhost:8181/task", {
+        const response = await fetch(`${BASE_URL}/task`, {
           method: "GET",
           credentials: "include", // Include cookies
           headers: {
@@ -126,7 +127,7 @@ function Home() {
     }
     const fetchTaskBoards = async () => {
       try {
-        const response = await fetch("http://localhost:8181/view", {
+        const response = await fetch(`${BASE_URL}/view`, {
           method: "GET",
           credentials: "include", // Include cookies
           headers: {
@@ -166,7 +167,7 @@ function Home() {
   
   const updateTaskBoardsOnServer = async (updatedBoards) => {
     try {
-      const response = await fetch("http://localhost:8181/view/update", {
+      const response = await fetch(`${BASE_URL}/view/update`, {
         method: "POST",
         credentials: "include", // Include cookies
         headers: {

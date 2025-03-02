@@ -4,6 +4,7 @@ import { Button, Modal, Form, Input, message } from "antd";
 const TodoDialog = ({ theme, status, onTodoAdded }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const BASE_URL = import.meta.env.VITE_REACT_APP_BASE_URL;
 
   const [form] = Form.useForm();
 
@@ -25,7 +26,7 @@ const TodoDialog = ({ theme, status, onTodoAdded }) => {
     try {
       const newTask = { ...values, taskStatus: status }; 
       // console.log(newTask);
-      const response = await fetch("http://localhost:8181/task/add", {
+      const response = await fetch(`${BASE_URL}/task/add`, {
         method: "POST",
         credentials: "include",
         headers: {

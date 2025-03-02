@@ -30,9 +30,10 @@ const router=createBrowserRouter(
     
   ]
 );
+const BASE_URL = import.meta.env.VITE_REACT_APP_BASE_URL;
 function App() {
   return (
-    <SocketContext.Provider value={io('http://localhost:8181')}>
+    <SocketContext.Provider value={io(`${BASE_URL}`)}>
       <RouterProvider router={router} /> 
     </SocketContext.Provider>
   );

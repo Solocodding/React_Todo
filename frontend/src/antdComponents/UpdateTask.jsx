@@ -4,6 +4,7 @@ import { Button, Modal, Form, Input, message } from "antd";
 const UpdateTask = ({ theme, item, setTasks, setShowOptions }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const BASE_URL = import.meta.env.VITE_REACT_APP_BASE_URL;
 
   const [form] = Form.useForm();
 
@@ -29,7 +30,7 @@ const UpdateTask = ({ theme, item, setTasks, setShowOptions }) => {
       const newTask = { ...values }; 
     //   console.log(newTask);
     //   console.log(item._id);
-      const response = await fetch(`http://localhost:8181/task/update/${item._id}`, {
+      const response = await fetch(`${BASE_URL}/task/update/${item._id}`, {
         method: "PUT",
         credentials: "include",
         headers: {

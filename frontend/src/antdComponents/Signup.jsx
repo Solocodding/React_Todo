@@ -5,10 +5,11 @@ import { message } from "antd";
 function Signup() {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const link=useNavigate();
+  const BASE_URL = import.meta.env.VITE_REACT_APP_BASE_URL;
   
   const onSubmit = async (data) => {
     try {
-      const response = await fetch("http://localhost:8181/auth/signup", {
+      const response = await fetch(`${BASE_URL}/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

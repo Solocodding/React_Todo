@@ -4,6 +4,7 @@ export default function Sharewith({theme, item, setShowOptions}){
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
+    const BASE_URL = import.meta.env.VITE_REACT_APP_BASE_URL;
     const showModal = () => {
         setIsModalOpen(true);
     };
@@ -22,7 +23,7 @@ export default function Sharewith({theme, item, setShowOptions}){
         // console.log(values);
         setLoading(true);
         try {
-            const response = await fetch(`http://localhost:8181/task/sharewith/${item._id}`,{
+            const response = await fetch(`${BASE_URL}/task/sharewith/${item._id}`,{
                 method: "PUT",
                 credentials: "include",
                 headers: {

@@ -6,11 +6,12 @@ import { useDrag, useDrop } from 'react-dnd';
 import { useRef } from 'react';
 
 export default function TaskBoard({theme, status, index, tasks, setTasks,moveBoard }) {
+    const BASE_URL = import.meta.env.VITE_REACT_APP_BASE_URL;
     
     const ref=useRef(null);
     const handleDnd = async (task, taskStatus) => {
         try {
-          const response = await fetch("http://localhost:8181/task/dnd", {
+          const response = await fetch(`${BASE_URL}/task/dnd`, {
             method: "PUT",
             credentials: "include",
             headers: {

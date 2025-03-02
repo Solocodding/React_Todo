@@ -9,10 +9,11 @@ import { message } from 'antd';
 import { useDrag } from "react-dnd";
 import {SocketContext} from "../../App";
 function Task({ item, theme, setTasks }) {
+    const BASE_URL = import.meta.env.VITE_REACT_APP_BASE_URL;
 
     const handleRefresh = async () => {
         try {
-          const response = await fetch("http://localhost:8181/task", {
+          const response = await fetch(`${BASE_URL}/task`, {
             method: "GET",
             credentials: "include", // Include cookies
             headers: {
@@ -98,7 +99,7 @@ function Task({ item, theme, setTasks }) {
         if (confirm("Are you sure you want to delete this task?")) {
 
             try {
-                const response = await fetch(`http://localhost:8181/task/delete/${item._id}/${user._id}`, {
+                const response = await fetch(`${BASE_URL}/task/delete/${item._id}/${user._id}`, {
                     method: "DELETE",
                     credentials: "include",
                 });

@@ -4,10 +4,11 @@ import { message } from 'antd';
 
 function Login({ setLoggedIn }) {
   const { register, handleSubmit, formState: { errors } } = useForm();
+  const BASE_URL = import.meta.env.VITE_REACT_APP_BASE_URL;
 
   const onSubmit = async (data) => {
     try {
-      const response = await fetch('http://localhost:8181/auth/login', {
+      const response = await fetch(`${BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
