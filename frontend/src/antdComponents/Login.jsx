@@ -1,10 +1,15 @@
+import React, { useContext } from 'react';
+import { SocketContext } from '../App';
 import { useForm } from 'react-hook-form';
 import { NavLink } from 'react-router-dom';
 import { message } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
-function Login({ setLoggedIn }) {
+function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const BASE_URL = import.meta.env.VITE_REACT_APP_BASE_URL;
+  const {setLoggedIn} = useContext(SocketContext);
+  const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     try {
@@ -23,6 +28,7 @@ function Login({ setLoggedIn }) {
         localStorage.setItem('user', JSON.stringify(user));
         setLoggedIn(true);
         message.success('Login successful!');
+        navigate("/");
       } else {
         message.error(`Login failed: ${result.message}`);
       }

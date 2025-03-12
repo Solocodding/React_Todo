@@ -72,4 +72,13 @@ const login = async (req, res) => {
         res.status(500).json({ message: "Something went wrong" });
     }
 }
-module.exports = { signup, login };
+const logout = async (req, res) => {
+    res.cookie("authToken", "", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+        maxAge:0, // Expire immediately
+    });
+    res.status(200).json({ message: "Logged out successfully" });
+};
+module.exports = { signup, login, logout };

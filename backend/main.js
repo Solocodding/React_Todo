@@ -35,6 +35,7 @@ app.use(
   })
 );
 //Routes
+const dashBoardRoutes = require('./routes/dashBoardRoutes.js');
 const authRoutes = require('./routes/authRoutes.js');
 const taskRoutes = require('./routes/taskRoutes.js');
 const viewRoutes = require('./routes/viewRoutes.js');
@@ -53,6 +54,7 @@ app.use((req,res,next)=>{
   next();
 })
 
+app.use("/", dashBoardRoutes);
 app.use("/auth", authRoutes);
 app.use("/task", taskRoutes);
 app.use("/view", viewRoutes); 

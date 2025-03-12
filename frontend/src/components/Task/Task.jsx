@@ -35,7 +35,7 @@ function Task({ item, theme, setTasks }) {
         }
     };
 
-    const socket = useContext(SocketContext);
+    const {socket} = useContext(SocketContext);
 
     socket.on('refreshTask', (taskId) => {
         // console.log("refreshTask");

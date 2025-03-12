@@ -11,7 +11,7 @@ function Header({ theme, tasks, setTasks,taskBoards, setTaskBoards, notification
 
     const [showNotifications, setShowNotifications] = useState(false);
 
-    const socket = useContext(SocketContext);
+    const {socket} = useContext(SocketContext);
 
     useEffect(() => {
         socket.on('notification', (data) => {

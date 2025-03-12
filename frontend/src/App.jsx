@@ -1,3 +1,4 @@
+import React, { useState } from 'react'
 import Login from './antdComponents/Login'
 import Signup from './antdComponents/Signup'
 import Home from './components/Home'
@@ -32,8 +33,10 @@ const router=createBrowserRouter(
 );
 const BASE_URL = import.meta.env.VITE_REACT_APP_BASE_URL;
 function App() {
+  const [loggedin, setLoggedIn] = useState(false);
+  const socket = io(`${BASE_URL}`);
   return (
-    <SocketContext.Provider value={io(`${BASE_URL}`)}>
+    <SocketContext.Provider value={{socket,loggedin,setLoggedIn}}>
       <RouterProvider router={router} /> 
     </SocketContext.Provider>
   );

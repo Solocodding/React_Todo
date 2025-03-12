@@ -20,7 +20,7 @@ function AddNewBoard({theme, setTaskBoards}) {
     };
 
     const handleFormSubmit = async (values) => {
-        console.log(values);
+        // console.log(values);
         try {
             const response = await fetch(`${BASE_URL}/view/add`, {
                 method: "POST",

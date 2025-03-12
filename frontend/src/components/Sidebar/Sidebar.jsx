@@ -11,9 +11,11 @@ import upload from '../../assets/Sidebar/upload.svg'
 import nextpage from '../../assets/Sidebar/nextpage.svg'
 import links from '../../assets/Sidebar/links.svg'
 import logout from '../../assets/Sidebar/logout.svg'
-import Cookie from 'js-cookie'
 import Report from '../../antdComponents/Report'
-function Sidebar({setProjectvisible, tasks, taskBoards}) {
+
+const BASE_URL = import.meta.env.VITE_REACT_APP_BASE_URL;
+
+function Sidebar({setProjectvisible, tasks, taskBoards,  setLoggedIn}) {
     const [reportvisible, setReportvisible] = useState(false);
     const navigate = useNavigate();
     function toggleProjectview(){
@@ -22,6 +24,21 @@ function Sidebar({setProjectvisible, tasks, taskBoards}) {
     function toggleReportview(){
         setReportvisible((prev)=>!prev);
     }
+    const handleLogout = async () => {
+        if (confirm("Are you sure you want to logout?")) {
+            await fetch(`${BASE_URL}/auth/logout`, {
+                method: "POST",
+                credentials: "include",
+            });
+
+            localStorage.removeItem("user");
+            setLoggedIn(false);
+            setTimeout(() => {  
+                navigate("/auth/login");
+            },0);
+        }
+    };
+    
     return (
         <>
             <div className="bg-[#1C1D22] flex items-center justify-center w-full  max-w-[70px] h-screen overflow-y-auto">
@@ -41,14 +58,7 @@ function Sidebar({setProjectvisible, tasks, taskBoards}) {
                     <img src={links} alt="Links" className='absolute top-[300px]'/>
                 </div>
                     <img src={logout} alt="Logout" className='absolute bottom-[25px] hover:cursor-pointer'
-                        onClick={()=>{
-                            if(confirm("Are you sure you want to logout?")){
-                                Cookie.remove('authToken');
-                                localStorage.removeItem('user');
-                                window.location.href = '/';
-                                // navigate('/');
-                            }
-                        }}  
+                        onClick={handleLogout}  
                     />
             </div>
 

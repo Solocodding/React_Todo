@@ -3,41 +3,41 @@ import Sidebar from './Sidebar/Sidebar';
 import Header from './Headers/Header';
 import Menu from './Menu/Menu';
 import Project from './Projects/Project';
-import Login from '../antdComponents/Login';
-import Cookies from 'js-cookie';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { message } from 'antd';
 import TaskBoard from './Task/TaskBoard';
 import { SocketContext } from '../App';
-
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
+  const navigate = useNavigate();
   const [theme, setTheme] = useState('dark');
   const [projectvisible, setProjectvisible] = useState(true);
   const [tasks, setTasks] = useState([]);
-  const [loggedin, setLoggedIn] = useState(false);
+  // const [loggedin, setLoggedIn] = useState(false);
   const [taskBoards, setTaskBoards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState([]);
   const BASE_URL = import.meta.env.VITE_REACT_APP_BASE_URL;
 
-  const socket = useContext(SocketContext);
+  const {socket,loggedin,setLoggedIn} = useContext(SocketContext);
 
   useEffect(() => {
     if (!socket) return; 
 
-    socket.on("connect", () => {
+    function handleConnect() {
       const user=JSON.parse(localStorage.getItem('user'));
       const userEmail = user?.email; 
         if (userEmail) {
             socket.emit("updateSocketId", { email: userEmail, socketId: socket.id });
         }
-        // console.log("Socket connected:", socket.id, userEmail);
-    });
+        console.log("Socket connected:", socket.id, userEmail);
+    };
+    socket.on("connect", handleConnect);
 
     return () => {
-        socket.off("connect");
+        socket.off("connect", handleConnect);
     };
   }, [socket,loggedin]);
   
@@ -73,15 +73,37 @@ function Home() {
   ];
 
   useEffect(() => {
-    const token = Cookies.get("authToken");
-    // console.log(token);
-    if (token) {
-      setLoggedIn(true);
-    } else {
-      setLoggedIn(false);
+    try{
+      (async ()=>{
+        const response =await fetch(`${BASE_URL}/`, {
+          method: "GET",
+          credentials: "include", // Include cookies
+        });
+        if(response.status === 200){
+          setLoggedIn(true);
+          const result = await response.json();
+          localStorage.setItem('user',JSON.stringify(result.user));
+          console.log("User:",result.user);
+        }else{
+          setLoggedIn(false); 
+        }
+        setLoading(false);
+      })();
+    }catch(error){
+      console.error("Error while accessing dashboard:", error.message);
     }
-    setLoading(false);
   }, []);
+
+  // useEffect(() => {
+  //   const token = Cookies.get("authToken");
+  //   // console.log(token);
+  //   if (token) {
+  //     setLoggedIn(true);
+  //   } else {
+  //     setLoggedIn(false);
+  //   }
+  //   setLoading(false);
+  // }, []);
 
   // Fetch tasks when loggedin is true
   useEffect(() => {
@@ -155,6 +177,7 @@ function Home() {
     }
   }, [loggedin]);
 
+
   const moveBoard = async (fromIndex, toIndex) => {
     setTaskBoards((prevBoards) => {
       const updatedBoards = [...prevBoards];
@@ -197,7 +220,7 @@ function Home() {
             } h-screen overflow-hidden`}
         >
           {/* Sidebar */}
-          <Sidebar setProjectvisible={setProjectvisible} tasks={tasks} taskBoards={taskBoards} />
+          <Sidebar setProjectvisible={setProjectvisible} tasks={tasks} taskBoards={taskBoards} setLoggedIn={setLoggedIn} />
 
           {/* Main  Content */}
           <div className={`${projectvisible ? 'block' : 'hidden'} `}>
@@ -229,7 +252,8 @@ function Home() {
           </div>
         </div>
       ) : (
-        <Login setLoggedIn={setLoggedIn}/>
+        // <Login setLoggedIn={setLoggedIn}/>
+        navigate("/auth/login")
       )}
     </ DndProvider>
   );
